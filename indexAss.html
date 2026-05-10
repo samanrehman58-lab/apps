@@ -1,0 +1,779 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Coin Toss + Image Changer</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #eef2f7;
+            margin: 0;
+            padding: 20px;
+            color: #1f2937;
+        }
+        .container {
+            max-width: 860px;
+            margin: 0 auto;
+            display: grid;
+            gap: 24px;
+        }
+        .card {
+            background: #ffffff;
+            border-radius: 16px;
+            box-shadow: 0 14px 35px rgba(15, 23, 42, 0.08);
+            padding: 28px;
+        }
+        .card h1 {
+            margin: 0 0 16px;
+            font-size: 1.75rem;
+        }
+        .button,
+        .image-button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 12px 22px;
+            border: none;
+            border-radius: 12px;
+            background: #2563eb;
+            color: #ffffff;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background 0.2s ease;
+        }
+        .button:hover,
+        .image-button:hover {
+            background: #1d4ed8;
+        }
+        .result-box,
+        .preview-box {
+            margin-top: 18px;
+            padding: 18px;
+            border-radius: 16px;
+            border: 1px solid #d1d5db;
+            background: #f8fafc;
+        }
+        .result-box {
+            text-align: center;
+            font-size: 3rem;
+            color: #111827;
+            min-height: 130px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .preview-box {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        .image-list {
+            display: grid;
+            gap: 12px;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+        }
+        .image-list button {
+            width: 100%;
+            padding: 12px;
+            border-radius: 10px;
+            border: 1px solid #cbd5e1;
+            background: #f8fafc;
+            cursor: pointer;
+            transition: background 0.2s ease, border-color 0.2s ease;
+        }
+        .image-list button:hover {
+            background: #e2e8f0;
+            border-color: #94a3b8;
+        }
+        .image-preview {
+            width: 100%;
+            border-radius: 16px;
+            object-fit: cover;
+            max-height: 360px;
+            border: 1px solid #cbd5e1;
+        }
+        .small-text {
+            color: #4b5563;
+            font-size: 0.95rem;
+        }
+        .form-group {
+            margin-bottom: 16px;
+            display: flex;
+            flex-direction: column;
+        }
+        .form-group label {
+            margin-bottom: 6px;
+            font-weight: 600;
+            color: #374151;
+        }
+        .form-group input,
+        .form-group select {
+            padding: 10px 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-family: Arial, sans-serif;
+            transition: border-color 0.2s ease;
+        }
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+        .form-container {
+            display: grid;
+            gap: 12px;
+            margin-top: 18px;
+        }
+        .student-card-display {
+            margin-top: 24px;
+            padding: 24px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 16px;
+            color: #ffffff;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+            min-height: 200px;
+            display: none;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        .student-card-display.show {
+            display: flex;
+        }
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+        }
+        .card-name {
+            font-size: 1.75rem;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+        .card-id {
+            font-size: 2rem;
+            font-weight: bold;
+            opacity: 0.9;
+        }
+        .card-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-top: 12px;
+        }
+        .card-detail-item {
+            display: flex;
+            flex-direction: column;
+        }
+        .card-detail-label {
+            font-size: 0.85rem;
+            opacity: 0.8;
+            margin-bottom: 4px;
+        }
+        .card-detail-value {
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+        .weather-search {
+            display: flex;
+            gap: 12px;
+            margin-top: 18px;
+        }
+        .weather-search input {
+            flex: 1;
+            padding: 10px 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            font-size: 1rem;
+        }
+        .weather-search input:focus {
+            outline: none;
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+        .weather-display {
+            margin-top: 24px;
+            padding: 24px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 16px;
+            color: #ffffff;
+            display: none;
+        }
+        .weather-display.show {
+            display: block;
+        }
+        .weather-main {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+        .weather-location {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+        .weather-temp {
+            font-size: 3rem;
+            font-weight: bold;
+        }
+        .weather-condition {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            margin-top: 4px;
+        }
+        .weather-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 16px;
+        }
+        .weather-item {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 12px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        .weather-item-label {
+            font-size: 0.85rem;
+            opacity: 0.8;
+            margin-bottom: 6px;
+        }
+        .weather-item-value {
+            font-size: 1.3rem;
+            font-weight: bold;
+        }
+        .tasbeeh-counter-display {
+            font-size: 5rem;
+            font-weight: bold;
+            text-align: center;
+            color: #16a34a;
+            padding: 40px 20px;
+            background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%);
+            border-radius: 16px;
+            margin-top: 18px;
+            border: 2px solid #16a34a;
+        }
+        .tasbeeh-buttons {
+            display: flex;
+            gap: 12px;
+            margin-top: 18px;
+            flex-wrap: wrap;
+        }
+        .tasbeeh-btn {
+            flex: 1;
+            min-width: 150px;
+            padding: 14px 20px;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .tasbeeh-btn-increment {
+            background: #16a34a;
+            color: #ffffff;
+        }
+        .tasbeeh-btn-increment:hover {
+            background: #15803d;
+            transform: scale(1.05);
+        }
+        .tasbeeh-btn-reset {
+            background: #dc2626;
+            color: #ffffff;
+        }
+        .tasbeeh-btn-reset:hover {
+            background: #b91c1c;
+        }
+        .tasbeeh-presets {
+            margin-top: 18px;
+            padding: 16px;
+            background: #f3f4f6;
+            border-radius: 12px;
+        }
+        .tasbeeh-presets-label {
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: #374151;
+            font-size: 0.95rem;
+        }
+        .tasbeeh-preset-buttons {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+            gap: 8px;
+        }
+        .tasbeeh-preset-btn {
+            padding: 10px 14px;
+            border: 1px solid #d1d5db;
+            background: #ffffff;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.2s ease;
+        }
+        .tasbeeh-preset-btn:hover {
+            background: #e5e7eb;
+            border-color: #9ca3af;
+        }
+        .color-image-section {
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+            margin-top: 18px;
+        }
+        .color-image-preview {
+            min-height: 180px;
+            border-radius: 16px;
+            background: #e2e8f0;
+            border: 2px solid #cbd5e1;
+            transition: background 0.3s ease;
+        }
+        .color-picker {
+            width: 100%;
+            height: 50px;
+            border: 1px solid #d1d5db;
+            border-radius: 10px;
+            cursor: pointer;
+        }
+        @media (max-width: 768px) {
+            .color-image-section {
+                display: flex;
+                flex-direction: column;
+            }
+        }
+        .dice-roller-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 24px;
+            margin-top: 18px;
+        }
+        .dice-display {
+            width: 180px;
+            height: 180px;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 5rem;
+            font-weight: bold;
+            color: #ffffff;
+            box-shadow: 0 10px 30px rgba(245, 87, 108, 0.3);
+            border: 3px solid #ffffff;
+            transition: all 0.3s ease;
+        }
+        .dice-display.rolling {
+            animation: rollDice 0.5s ease-in-out;
+        }
+        @keyframes rollDice {
+            0%, 100% { transform: scale(1) rotateZ(0deg); }
+            25% { transform: scale(1.1) rotateZ(90deg); }
+            50% { transform: scale(1.15) rotateZ(180deg); }
+            75% { transform: scale(1.1) rotateZ(270deg); }
+        }
+        .dice-button-group {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .dice-roll-btn {
+            padding: 16px 32px;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: #ffffff;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(245, 87, 108, 0.3);
+        }
+        .dice-roll-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(245, 87, 108, 0.4);
+        }
+        .dice-roll-btn:active {
+            transform: translateY(-1px);
+        }
+        .dice-history {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(50px, 1fr));
+            gap: 8px;
+            width: 100%;
+            max-width: 400px;
+            margin-top: 12px;
+        }
+        .dice-history-item {
+            width: 50px;
+            height: 50px;
+            background: #f3f4f6;
+            border: 2px solid #d1d5db;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            color: #374151;
+            font-size: 1.1rem;
+        }
+        .dice-history-label {
+            font-size: 0.85rem;
+            color: #6b7280;
+            margin-bottom: 8px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <section class="card">
+            <h1>Coin Toss App</h1>
+            <p class="small-text">Click the button to flip a coin and see heads or tails.</p>
+            <div class="result-box" id="coinResult">-</div>
+            <button class="button" id="tossCoinButton">Toss Coin</button>
+        </section>
+
+        <section class="card">
+            <h1>Image Changer App</h1>
+            <p class="small-text">Choose an image to display in the preview area.</p>
+            <div class="preview-box">
+                <img src="https://via.placeholder.com/800x360?text=Pick+an+Image" alt="Image Preview" id="imagePreview" class="image-preview">
+                <div class="image-list">
+                    <button class="image-button" data-image="https://via.placeholder.com/800x360/3b82f6/ffffff?text=Blue+Image">Blue Image</button>
+                    <button class="image-button" data-image="https://via.placeholder.com/800x360/f97316/ffffff?text=Orange+Image">Orange Image</button>
+                    <button class="image-button" data-image="https://via.placeholder.com/800x360/10b981/ffffff?text=Green+Image">Green Image</button>
+                    <button class="image-button" data-image="https://via.placeholder.com/800x360/8b5cf6/ffffff?text=Purple+Image">Purple Image</button>
+                </div>
+            </div>
+        </section>
+
+        <section class="card">
+            <h1>Student Card App</h1>
+            <p class="small-text">Fill in the form to generate a student card.</p>
+            <form id="studentForm" class="form-container">
+                <div class="form-group">
+                    <label for="studentName">Full Name</label>
+                    <input type="text" id="studentName" placeholder="Enter your name" required>
+                </div>
+                <div class="form-group">
+                    <label for="studentID">Student ID</label>
+                    <input type="text" id="studentID" placeholder="e.g., STU123456" required>
+                </div>
+                <div class="form-group">
+                    <label for="studentEmail">Email Address</label>
+                    <input type="email" id="studentEmail" placeholder="your.email@school.com" required>
+                </div>
+                <div class="form-group">
+                    <label for="studentGrade">Grade/Class</label>
+                    <select id="studentGrade" required>
+                        <option value="">Select a grade</option>
+                        <option value="Grade 9">Grade 9</option>
+                        <option value="Grade 10">Grade 10</option>
+                        <option value="Grade 11">Grade 11</option>
+                        <option value="Grade 12">Grade 12</option>
+                        <option value="Class A">Class A</option>
+                        <option value="Class B">Class B</option>
+                        <option value="Class C">Class C</option>
+                    </select>
+                </div>
+                <button type="submit" class="button">Generate Card</button>
+            </form>
+            <div class="student-card-display" id="studentCard">
+                <div class="card-header">
+                    <div>
+                        <div class="card-name" id="cardName">-</div>
+                        <div style="font-size: 0.9rem; opacity: 0.8;">Student ID</div>
+                    </div>
+                </div>
+                <div class="card-id" id="cardID">-</div>
+                <div class="card-details">
+                    <div class="card-detail-item">
+                        <div class="card-detail-label">Email</div>
+                        <div class="card-detail-value" id="cardEmail">-</div>
+                    </div>
+                    <div class="card-detail-item">
+                        <div class="card-detail-label">Grade</div>
+                        <div class="card-detail-value" id="cardGrade">-</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="card">
+            <h1>Weather App</h1>
+            <p class="small-text">Search weather for cities worldwide. Over 40+ cities available.</p>
+            <div class="weather-search">
+                <input type="text" id="weatherInput" placeholder="Enter city name (e.g., New York, London)" />
+                <button class="button" id="weatherSearchButton">Search</button>
+            </div>
+            <div class="weather-display" id="weatherDisplay">
+                <div class="weather-main">
+                    <div>
+                        <div class="weather-location" id="weatherCity">-</div>
+                        <div class="weather-condition" id="weatherCondition">-</div>
+                    </div>
+                    <div class="weather-temp" id="weatherTemp">-°C</div>
+                </div>
+                <div class="weather-grid">
+                    <div class="weather-item">
+                        <div class="weather-item-label">Humidity</div>
+                        <div class="weather-item-value" id="weatherHumidity">-</div>
+                    </div>
+                    <div class="weather-item">
+                        <div class="weather-item-label">Wind Speed</div>
+                        <div class="weather-item-value" id="weatherWind">-</div>
+                    </div>
+                    <div class="weather-item">
+                        <div class="weather-item-label">Feels Like</div>
+                        <div class="weather-item-value" id="weatherFeelsLike">-°C</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="card">
+            <h1>Tasbeeh Counter</h1>
+            <p class="small-text">Use this counter for Islamic dhikr (remembrance). Tap to count.</p>
+            <div class="tasbeeh-counter-display" id="tasbeehCounter">0</div>
+            <div class="tasbeeh-buttons">
+                <button class="tasbeeh-btn tasbeeh-btn-increment" id="tasbeehIncrement">+ 1</button>
+                <button class="tasbeeh-btn tasbeeh-btn-reset" id="tasbeehReset">Reset</button>
+            </div>
+            <div class="tasbeeh-presets">
+                <div class="tasbeeh-presets-label">Quick Set (Common Tasbeeh):</div>
+                <div class="tasbeeh-preset-buttons">
+                    <button class="tasbeeh-preset-btn" data-count="33">33x Subhanallah</button>
+                    <button class="tasbeeh-preset-btn" data-count="34">34x Alhamdulillah</button>
+                    <button class="tasbeeh-preset-btn" data-count="99">99x Allahu Akbar</button>
+                    <button class="tasbeeh-preset-btn" data-count="100">100x Tahlil</button>
+                </div>
+            </div>
+        </section>
+
+        <section class="card">
+            <h1>Color Changer</h1>
+            <p class="small-text">Pick a color and watch the preview box change.</p>
+            <div class="color-image-section">
+                <input type="color" id="bgColorPicker" class="color-picker" value="#667eea">
+                <div class="color-image-preview" id="colorImagePreview"></div>
+            </div>
+        </section>
+
+        <section class="card">
+            <h1>Dice Roller (1-6)</h1>
+            <p class="small-text">Roll a 6-sided dice and see the result.</p>
+            <div class="dice-roller-container">
+                <div class="dice-display" id="diceDisplay">-</div>
+                <button class="dice-roll-btn" id="diceRollButton">Roll Dice</button>
+                <div class="dice-history-label">Last 10 Rolls:</div>
+                <div class="dice-history" id="diceHistory"></div>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        const coinResult = document.getElementById('coinResult');
+        const tossCoinButton = document.getElementById('tossCoinButton');
+        const imagePreview = document.getElementById('imagePreview');
+        const imageButtons = document.querySelectorAll('[data-image]');
+        const diceResult = document.getElementById('diceResult');
+        const roll6DiceButton = document.getElementById('roll6DiceButton');
+        const roll20DiceButton = document.getElementById('roll20DiceButton');
+        const roll2DiceButton = document.getElementById('roll2DiceButton');
+
+        // Coin Toss
+        tossCoinButton.addEventListener('click', () => {
+            const flip = Math.random() < 0.5 ? 'Heads' : 'Tails';
+            coinResult.textContent = flip;
+            coinResult.style.color = flip === 'Heads' ? '#1d4ed8' : '#dc2626';
+        });
+
+        // Image Changer
+        imageButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const imageUrl = button.getAttribute('data-image');
+                imagePreview.src = imageUrl;
+            });
+        });
+       
+        // Student Card
+        const studentForm = document.getElementById('studentForm');
+        const studentCard = document.getElementById('studentCard');
+        const cardName = document.getElementById('cardName');
+        const cardID = document.getElementById('cardID');
+        const cardEmail = document.getElementById('cardEmail');
+        const cardGrade = document.getElementById('cardGrade');
+
+        studentForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const name = document.getElementById('studentName').value;
+            const id = document.getElementById('studentID').value;
+            const email = document.getElementById('studentEmail').value;
+            const grade = document.getElementById('studentGrade').value;
+
+            cardName.textContent = name;
+            cardID.textContent = id;
+            cardEmail.textContent = email;
+            cardGrade.textContent = grade;
+
+            studentCard.classList.add('show');
+        });
+
+        // Weather App
+        const weatherInput = document.getElementById('weatherInput');
+        const weatherSearchButton = document.getElementById('weatherSearchButton');
+        const weatherDisplay = document.getElementById('weatherDisplay');
+        const weatherCity = document.getElementById('weatherCity');
+        const weatherCondition = document.getElementById('weatherCondition');
+        const weatherTemp = document.getElementById('weatherTemp');
+        const weatherHumidity = document.getElementById('weatherHumidity');
+        const weatherWind = document.getElementById('weatherWind');
+        const weatherFeelsLike = document.getElementById('weatherFeelsLike');
+
+        const weatherData = {
+            // Asia
+            'Tokyo': { temp: 25, condition: 'Sunny', humidity: '55%', wind: '8 km/h', feelsLike: 24, country: 'Japan' },
+            'Delhi': { temp: 32, condition: 'Hot & Humid', humidity: '60%', wind: '10 km/h', feelsLike: 35, country: 'India' },
+            'Bangkok': { temp: 31, condition: 'Humid', humidity: '75%', wind: '12 km/h', feelsLike: 33, country: 'Thailand' },
+            'Singapore': { temp: 28, condition: 'Rainy', humidity: '80%', wind: '15 km/h', feelsLike: 30, country: 'Singapore' },
+            'Hong Kong': { temp: 27, condition: 'Cloudy', humidity: '70%', wind: '14 km/h', feelsLike: 26, country: 'Hong Kong' },
+            'Dubai': { temp: 38, condition: 'Sunny', humidity: '35%', wind: '6 km/h', feelsLike: 40, country: 'UAE' },
+            'Shanghai': { temp: 23, condition: 'Partly Cloudy', humidity: '65%', wind: '11 km/h', feelsLike: 22, country: 'China' },
+            'Mumbai': { temp: 30, condition: 'Humid', humidity: '72%', wind: '13 km/h', feelsLike: 32, country: 'India' },
+            'Seoul': { temp: 18, condition: 'Windy', humidity: '55%', wind: '18 km/h', feelsLike: 16, country: 'South Korea' },
+            'Karachi': { temp: 32, condition: 'Sunny', humidity: '50%', wind: '8 km/h', feelsLike: 33, country: 'Pakistan' },
+          
+        };
+
+        weatherSearchButton.addEventListener('click', () => {
+            const city = weatherInput.value.trim();
+            if (!city) {
+                alert('Please enter a city name');
+                return;
+            }
+
+            const cityKey = Object.keys(weatherData).find(key => key.toLowerCase() === city.toLowerCase());
+            if (cityKey) {
+                const data = weatherData[cityKey];
+                weatherCity.textContent = `${cityKey}, ${data.country}`;
+                weatherCondition.textContent = data.condition;
+                weatherTemp.textContent = `${data.temp}°C`;
+                weatherHumidity.textContent = data.humidity;
+                weatherWind.textContent = data.wind;
+                weatherFeelsLike.textContent = `${data.feelsLike}°C`;
+                weatherDisplay.classList.add('show');
+            } else {
+                const availableCities = Object.keys(weatherData).sort();
+                alert(`Weather data not found for "${city}".\n\nAvailable cities:\n${availableCities.slice(0, 20).join(', ')}\n...and ${availableCities.length - 20} more`);
+            }
+        });
+
+        weatherInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                weatherSearchButton.click();
+            }
+        });
+
+        // Tasbeeh Counter
+        const tasbeehCounter = document.getElementById('tasbeehCounter');
+        const tasbeehIncrement = document.getElementById('tasbeehIncrement');
+        const tasbeehReset = document.getElementById('tasbeehReset');
+        const tasbeehPresetButtons = document.querySelectorAll('[data-count]');
+
+        let count = 0;
+
+        tasbeehIncrement.addEventListener('click', () => {
+            count++;
+            tasbeehCounter.textContent = count;
+            // Add a subtle animation
+            tasbeehCounter.style.transform = 'scale(1.1)';
+            setTimeout(() => {
+                tasbeehCounter.style.transform = 'scale(1)';
+            }, 100);
+        });
+
+        tasbeehReset.addEventListener('click', () => {
+            count = 0;
+            tasbeehCounter.textContent = count;
+        });
+
+        tasbeehPresetButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                count = parseInt(btn.getAttribute('data-count'));
+                tasbeehCounter.textContent = count;
+            });
+        });
+
+        // Allow keyboard spacebar to increment counter
+        document.addEventListener('keypress', (e) => {
+            if (e.code === 'Space' && e.target === document.body) {
+                e.preventDefault();
+                tasbeehIncrement.click();
+            }
+        });
+
+        // Color Changer
+        const colorImagePreview = document.getElementById('colorImagePreview');
+        const bgColorPicker = document.getElementById('bgColorPicker');
+
+        bgColorPicker.addEventListener('input', (e) => {
+            colorImagePreview.style.background = e.target.value;
+        });
+
+        // Set initial background color
+        colorImagePreview.style.background = '#667eea';
+
+        // Dice Roller (1-6)
+        const diceDisplay = document.getElementById('diceDisplay');
+        const diceRollButton = document.getElementById('diceRollButton');
+        const diceHistory = document.getElementById('diceHistory');
+        let rollHistory = [];
+
+        diceRollButton.addEventListener('click', () => {
+            // Add rolling animation
+            diceDisplay.classList.add('rolling');
+            diceRollButton.disabled = true;
+
+            // Simulate rolling for 0.5 seconds
+            setTimeout(() => {
+                const result = Math.floor(Math.random() * 6) + 1;
+                diceDisplay.textContent = result;
+                diceDisplay.classList.remove('rolling');
+                diceRollButton.disabled = false;
+
+                // Add to history
+                rollHistory.unshift(result);
+                if (rollHistory.length > 10) {
+                    rollHistory.pop();
+                }
+
+                // Update history display
+                updateHistoryDisplay();
+            }, 500);
+        });
+
+        function updateHistoryDisplay() {
+            diceHistory.innerHTML = '';
+            rollHistory.forEach(roll => {
+                const historyItem = document.createElement('div');
+                historyItem.className = 'dice-history-item';
+                historyItem.textContent = roll;
+                diceHistory.appendChild(historyItem);
+            });
+        }
+
+        // Allow spacebar to roll
+        document.addEventListener('keypress', (e) => {
+            if (e.code === 'Space' && e.target === document.body) {
+                e.preventDefault();
+                if (!diceRollButton.disabled) {
+                    diceRollButton.click();
+                }
+            }
+        });
+    </script>
+</body>
+</html>
